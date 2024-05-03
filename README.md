@@ -1,5 +1,5 @@
 >"This is my first Spring Boot web application.
-so I am eager to continue build and improve skill in it"
+
 # NotesWebApp
 
 NotesWebApp is a Java Spring Boot web application that utilizes the following technologies:
