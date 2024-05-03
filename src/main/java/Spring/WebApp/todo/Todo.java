@@ -3,6 +3,9 @@ package Spring.WebApp.todo;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 public class Todo {
 
     public Todo(int id, String name, String description, LocalDate targetDate, boolean done) {
@@ -13,6 +16,13 @@ public class Todo {
         this.targetDate = targetDate;
         this.done = done;
     }
+//    @Override
+//    public String toString() {
+//        return "Todo [id= " + id + ", name= " + name + ", description= " + description + ", targetDate= "
+//                + targetDate + ", done= " + done + "]";
+//    }
+
+    // foo (getters & setters)
 
     private int id;
     private String name;
@@ -48,6 +58,10 @@ public class Todo {
     public LocalDate getTargetDate() {
         return targetDate;
     }
+    public String getFormattedTargetDate() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH);
+        return formatter.format(targetDate);
+    }
 
     public void setTargetDate(LocalDate targetDate) {
         this.targetDate = targetDate;
@@ -59,12 +73,6 @@ public class Todo {
 
     public void setDone(boolean done) {
         this.done = done;
-    }
-
-    @Override
-    public String toString() {
-        return "Todo [id=" + id + ", name=" + name + ", description=" + description + ", targetDate="
-                + targetDate + ", done=" + done + "]";
     }
 
 }

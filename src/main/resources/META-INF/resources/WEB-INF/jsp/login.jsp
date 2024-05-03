@@ -2,132 +2,145 @@
 
 <title>Login Page</title>
 <style>
-	body {
-		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-		background-color: #f7f7f7;
-		margin: 0;
-	}
-	.container{
-		margin: 0;
-		top: 50px;
-		left: 50%;
-		position: absolute;
-		text-align: center;
-		transform: translateX(-50%);
-		background-color: #fff;
-		border-radius: 12px;
-		box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-		width: 400px;
-		height: 500px;
-		padding: 20px;
-	}
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+    }
 
-	.box h4 {
-		color: #000;
-		font-size: 24px;
-		font-weight: 600;
-		margin-top: 80px;
-	}
+    .container {
+        margin: 100px auto;
+        text-align: center;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        width: 400px;
+        padding: 40px;
+        animation: fadeIn 1s ease-in-out;
+    }
 
-	.box h4 span {
-		color: #8e8e93;
-		font-weight: normal;
-	}
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+            transform: translateY(-40px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(20);
+        }
+    }
 
-	.box h5 {
-		font-size: 14px;
-		color: #8e8e93;
-		margin-top: 10px;
-		margin-bottom: 50px;
-	}
+    .container h4 {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+    }
 
-	.box input[type = "text"],.box input[type = "password"] {
-		display: block;
-		margin: 20px auto;
-		background: #f0f0f0;
-		border: 0;
-		border-radius: 6px;
-		padding: 14px 10px;
-		width: 320px;
-		outline: none;
-		color: #000;
-		transition: all .2s ease-out;
-		font-size: 16px;
-		font-weight: 600;
-	}
-
-	.box input[type = "text"]:focus,.box input[type = "password"]:focus {
-		border: 1px solid #007aff;
-	}
-
-	.btn1 {
-		border:0;
-		background: #007aff;
-		color: #fff;
-		border-radius: 100px;
-		width: 340px;
-		height: 49px;
-		font-size: 16px;
-		position: absolute;
-		top: 79%;
-		left: 8%;
-		transition: 0.3s;
-		cursor: pointer;
-		font-weight: 600;
-	}
-
-	.btn1:hover {
-		background: #0062cc;
-	}
-
-	.rmb {
-		font-size: 13px;
-		color: #8e8e93;
-		margin-left: -20%;
-		margin-top: 10px;
-		display: inline-block;
-	}
-
-	.forgetpass {
-		position: absolute;
-		top: 40%;
-		right: 5%;
-		font-size: 14px;
-		color: #007aff;
-		text-decoration: none;
-		font-weight: 600;
-		transition: all .2s ease-out;
-		cursor: pointer;
-	}
+    .container h5 {
+        font-size: 14px;
+        color: #8e8e93;
+        margin-bottom: 30px;
+    }
 
 
-	.dnthave{
-		position: absolute;
-		top: 92%;
-		left: 24%;
-	}
+    input[type="text"],
+    input[type="password"] {
+        display: block;
+        margin: 0 auto;
+        background: transparent;
+        border: 0;
+        border-bottom: 2px solid #ccc;
+        border-radius: 0;
+        padding: 14px 10px;
+        width: 320px;
+        outline: none;
+        color: #333;
+        transition: all .2s ease-out;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
 
-	[type=checkbox]:checked + span:before {
-		font-family: FontAwesome;
-		font-size: 16px;
-		content: "\f00c";
-		position: absolute;
-		top: -4px;
-		color: #896cec
-	}
+    input[type="text"].active,
+    input[type="password"].active {
+        padding: 10px;
+        border-color: lightgray;
+    }
+
+    input[type="text"]:focus,
+    input[type="password"]:focus {
+        border-color: lightgray;
+    }
+
+    .reveal-password {
+        background: none;
+        border: none;
+        outline: none;
+        position: absolute;
+        top: 14px;
+        right: 10px;
+        cursor: pointer;
+    }
+
+    .reveal-password img {
+        width: 20px;
+        height: auto;
+    }
+        .btn1 {
+            background: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 100px;
+            width: 320px; /* Adjusted width */
+            height: 49px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.5s ease;
+        }
+
+        .btn1:hover {
+            background: #0062cc;
+        }
+
 </style>
 <body id="particles-js">
-<div class="animated bounceInDown">
-	<div class="container">
-		<form method="post" class="box">
-			<h4>Login</h4>
-			<h5>Sign in to your account.</h5>
-			<input type="text" name="name" placeholder="Name">
-			<input type="password" name="password" placeholder="Passsword">
-			<input type="submit" class="btn1">
-		</form>
-	</div>
+    <div class="container">
+        <form method="post" class="box">
+            <h4>Login</h4>
+            <h5>Sign in to your account.</h5>
+            <input type="text" name="name" placeholder="Name">
+            <div style="position: relative;">
+                <input type="password" name="password" id="password" placeholder="Password">
+                <button type="button" class="reveal-password" id="togglePassword"><img src="https://img.icons8.com/material-rounded/24/000000/visible.png"/></button>
+            </div>
+            <input type="submit" class="btn1">
+        </form>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
+            inputs.forEach(input => {
+                input.addEventListener("focus", function() {
+                    this.classList.add("active");
+                });
+                input.addEventListener("blur", function() {
+                    if (this.value === '') {
+                        this.classList.remove("active");
+                    }
+                });
+            });
 
-</div>
+            const passwordField = document.getElementById('password');
+            const togglePassword = document.getElementById('togglePassword');
+
+            togglePassword.addEventListener('click', function() {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                this.querySelector('img').setAttribute('src', type === 'password' ? 'https://img.icons8.com/material-rounded/24/000000/visible.png' : 'https://img.icons8.com/material-rounded/24/000000/invisible.png');
+            });
+        });
+    </script>
 </body>
 </html>

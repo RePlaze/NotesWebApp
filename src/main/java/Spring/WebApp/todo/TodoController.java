@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,76 +13,64 @@ import java.util.List;
 @SessionAttributes("name")
 public class TodoController {
 
+    private final TodoService todoService;
+
     public TodoController(TodoService todoService) {
-        super();
         this.todoService = todoService;
     }
 
-    private final TodoService todoService;
-
-
-    @RequestMapping("list-todos")
+    // List all todos
+    @GetMapping("list-todos")
     public String listAllTodos(ModelMap model) {
-        List<Todo> todos = todoService.findByname( "nazenov" );
-        model.addAttribute( "todos", todos );
-
+        String name = (String) model.get("name");
+        model.addAttribute("todos", todoService.findByname(name));
         return "listTodos";
     }
 
-    //GET, POST
-    @RequestMapping(value = "add-todo", method = RequestMethod.GET)
+    // Show page to add a new todo
+    @GetMapping("add-todo")
     public String showNewTodoPage(ModelMap model) {
-        String name = (String) model.get( "name" );
-        Todo todo = new Todo( 0, name, "", LocalDate.now(), false );
-        model.put( "todo", todo );
+        String name = (String) model.get("name");
+        model.addAttribute("todo", new Todo(0, name, "", LocalDate.now(), false));
         return "Todo";
     }
 
-    @RequestMapping(value = "add-todo", method = RequestMethod.POST)
-    public String addNewTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
-        if (result.hasErrors()) {
-            return "Todo";
-        }
-
-        String description = todo.getDescription();
-        if (description.length() < 10) {
-            result.rejectValue( "description", "length", "At least 10 characters" );
-            return "Todo";
-        }
-
-        String name = (String) model.get( "name" );
-        todoService.addTodo( name, description, LocalDate.now(), false );
-        return "redirect:list-todos";
-    }
-
-    @RequestMapping("delete-todo")
-    public String deleteTodo(@RequestParam int id) {
-        todoService.deleteById( id );
-        return "redirect:list-todos";
-    }
-
-    @RequestMapping(value = "update-todo",method = RequestMethod.GET)
+    // Show page to update a todo
+    @GetMapping("update-todo")
     public String showUpdateTodoPage(@RequestParam int id, ModelMap model) {
-        Todo todo = todoService.findById( id );
-        model.addAttribute( "todo", todo );
+        model.addAttribute("todo", todoService.findById(id));
         return "Todo";
     }
-    @RequestMapping(value = "update-todo", method = RequestMethod.POST)
-    public String UpdateTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
-        if (result.hasErrors()) {
+
+    // Add a new todo
+    @PostMapping("add-todo")
+    public String addNewTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
+        if (result.hasErrors() || todo.getDescription().length() < 10) {
+            result.rejectValue("description", "length", "Description should be at least 10 characters long");
             return "Todo";
         }
-
-        String description = todo.getDescription();
-        if (description.length() < 10) {
-            result.rejectValue( "description", "length", "At least 10 characters" );
-            return "Todo";
-        }
-
-        String name = (String) model.get( "name" );
-        todo.setname( name );
-        todoService.updateTodo( todo );
+        String name = (String) model.get("name");
+        todoService.addTodo(name, todo.getDescription(), LocalDate.now(), false);
         return "redirect:list-todos";
     }
 
+    // Delete a todo
+    @GetMapping("delete-todo")
+    public String deleteTodo(@RequestParam int id) {
+        todoService.deleteById(id);
+        return "redirect:list-todos";
+    }
+
+    // Update a todo
+    @PostMapping("update-todo")
+    public String updateTodo(ModelMap model, @Valid Todo todo, BindingResult result) {
+        if (result.hasErrors() || todo.getDescription().length() < 10) {
+            result.rejectValue("description", "length", "Description should be at least 10 characters long");
+            return "Todo";
+        }
+        String name = (String) model.get("name");
+        todo.setname(name);
+        todoService.updateTodo(todo);
+        return "redirect:list-todos";
+    }
 }
