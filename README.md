@@ -1,4 +1,3 @@
->"This is my first Spring Boot web application.
 
 # NotesWebApp
 
