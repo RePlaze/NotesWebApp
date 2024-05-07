@@ -191,12 +191,11 @@
         });
 
         $('#cancelAddTodo').click(function () {
-            $('#todoCreationCard').removeClass('active'); // Hide the todo creation card
+            $('#todoCreationCard').removeClass('active'); 
             $('#addTodoButton').removeClass('btn-cancel'); // Reset the button style
             $('#addTodoButton').removeClass('fade-out').addClass('fade-in'); // Reset fade animation
             $('#addTodoButton').removeClass('disabled'); // Enable the button
         });
-
         $('#addTodoForm').submit(function (event) {
             event.preventDefault(); // Prevent default form submission
             var formData = $(this).serialize(); // Serialize form data
