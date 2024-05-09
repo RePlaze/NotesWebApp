@@ -16,11 +16,6 @@ public class Todo {
         this.targetDate = targetDate;
         this.done = done;
     }
-//    @Override
-//    public String toString() {
-//        return "Todo [id= " + id + ", name= " + name + ", description= " + description + ", targetDate= "
-//                + targetDate + ", done= " + done + "]";
-//    }
 
     // foo (getters & setters)
 

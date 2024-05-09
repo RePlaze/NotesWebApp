@@ -5,7 +5,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@SessionAttributes("name")
+@SessionAttributes("username")
 public class LoginController {
 
 	private final AuthenticationService authenticationService;
@@ -20,14 +20,15 @@ public class LoginController {
 	}
 
 	@PostMapping("login")
-	public String handleLogin(@RequestParam String name,
+	public String handleLogin(@RequestParam String username,
 							  @RequestParam String password,
 							  ModelMap model) {
-		if(authenticationService.authenticate(name, password)) {
-			model.addAttribute("name", name);
+		if(authenticationService.authenticate(username, password)) {
+			model.addAttribute("username", username);
 			return "welcome";
+		} else {
+			model.addAttribute("msg", "Invalid username or password");
 		}
-
 		return "login";
 	}
 }
