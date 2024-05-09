@@ -1,5 +1,3 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ include file="common/header.jspf"%>
 <title>Add Todo</title>
 <style>
@@ -39,6 +37,11 @@
         color: #fff;
     }
 
+    /* Style date input specifically */
+    input[type="text"]#targetDate {
+        color: black; /* Set date text color to black */
+    }
+
     /* Style submit button */
     input[type="submit"] {
         padding: 10px 20px;
@@ -67,7 +70,7 @@
         </fieldset>
         <fieldset class="mb-3">
             <label for="targetDate">Target Date</label>
-            <input type="text" id="targetDate" name="targetDate" required="required" placeholder="Select target date"/>
+            <input type="text" id="targetDate" style="color: #1e1e1e;" name="targetDate" required="required" placeholder="Select target date"/>
             <form:errors path="targetDate" cssClass="text-bg-warning"/>
         </fieldset>
         <input type="hidden" id="id" name="id" required="required"/>
@@ -85,7 +88,8 @@
             format: 'dd MM yyyy',
             autoclose: true,
             todayHighlight: true,
-            orientation: 'bottom'
+            orientation: 'bottom',
+            color: #1e1e1e
         });
     });
 </script>

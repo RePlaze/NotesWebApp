@@ -62,8 +62,8 @@
     }
 
     .btn-cancel {
-        background-color: #343a40 !important;
-        border-color: #343a40 !important;
+        background-color: #383a40 !important;
+        border-color: #535c66T !important;
         color: #fff !important;
     }
 
@@ -151,12 +151,12 @@
             </div>
             <div class="form-group mb-3">
                 <label for="targetDate" style="color: #fff;">Target Date</label>
-                <input type="text" id="targetDate" name="targetDate" required="required" class="form-control" placeholder="Select target date"/>
+                <input type="text" id="targetDate" style="color: #1e1e1e;" name="targetDate" required="required" class="form-control" placeholder="Select target date"/>
             </div>
             <input type="hidden" id="id" name="id" required="required"/>
             <input type="hidden" id="done" name="done" required="required"/>
             <button id="submitTodo" type="submit" class="btn btn-done btn-block">Done</button>
-            <button id="cancelAddTodo" type="button" class="btn btn-cancel btn-block">Cancel</button>
+            <button id="cancelAddTodo" type="button" style="color: #535c66;" class="btn btn-cancel btn-block">Cancel</button>
         </form>
     </div>
     <c:forEach items="${todos}" var="todo">
