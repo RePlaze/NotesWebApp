@@ -39,6 +39,7 @@ public class RegistrationController {
         boolean registrationResult = authenticationService.registerUser(username, password);
         if (registrationResult) {
             model.addAttribute("message", "Registration successful. You can now login.");
+
             return "login";
         } else {
             model.addAttribute("error", "Registration failed. Please try again later.");

@@ -160,7 +160,7 @@
         <form id="addTransferForm" method="post" action="/add-Transfer">
             <div class="form-group mb-3">
                 <label for="description" style="color: #fff;">Amount</label>
-                <input type="text" id="description" name="Amount" required="required" class="form-control" placeholder="150.5 P"/>
+                    <input type="text" id="amount" name="amount" required="required" class="form-control" placeholder="150,5 P" pattern="\d+(\,\d{0,1})?" />
             </div>
             <div class="form-group mb-3">
                 <label for="phone" style="color: #fff;">Phone Number</label>
@@ -206,6 +206,19 @@ $(document).ready(function () {
             $('#phoneError').hide(); // Hide error message
             $('#submitTransfer').prop('disabled', false).fadeIn(200); // Enable and fade in "Done" button with 200ms duration
         }
+    });
+
+    // Allow only digits and one comma to be typed in the amount input field
+    $('#amount').on('input', function () {
+        var amount = $(this).val();
+        // Remove non-digit and non-comma characters
+        amount = amount.replace(/[^\d,]/g, '');
+        // Remove leading zeroes
+        amount = amount.replace(/^0+/, '');
+        // Remove extra commas
+        amount = amount.replace(/(,)\1+/g, '$1');
+        // Update the value in the input field
+        $(this).val(amount);
     });
 
     // Allow only digits to be typed in the phone number input field
