@@ -116,13 +116,14 @@
             <c:if test="${not empty msg}">
                 <script>alert('${msg}');</script>
             </c:if>
-            <input type="text" name="username" placeholder="Username">
+            <input type="text" name="username" placeholder="Phone number +7 ...">
              <div style="position: relative;">
                             <input type="password" name="password" id="password" placeholder="Password">
                             <button type="button" class="reveal-password" id="togglePassword"><img src="https://img.icons8.com/material-rounded/24/000000/visible.png"/></button>
                         </div>
             <input type="submit" class="btn1" value="Login">
-
+            <p></p>
+            <p>Dont have a account? <a href="registration"> Registrate </a></p>
         </form>
     </div>
 <script>

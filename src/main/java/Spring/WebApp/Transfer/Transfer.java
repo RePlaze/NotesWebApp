@@ -1,4 +1,4 @@
-package Spring.WebApp.todo;
+package Spring.WebApp.Transfer;
 
 import jakarta.validation.constraints.Size;
 
@@ -6,9 +6,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-public class Todo {
+public class Transfer {
 
-    public Todo(int id, String name, String description, LocalDate targetDate, boolean done) {
+    public Transfer(int id, String name, String description, LocalDate targetDate, boolean done) {
         super();
         this.id = id;
         this.name = name;

@@ -114,7 +114,7 @@
             <c:if test="${not empty error}">
                 <p class="error" style="font-weight: bold; color: #ff0000;">${error}</p>
             </c:if>
-            <input type="text" name="username" placeholder="Username">
+            <input type="text" name="username" placeholder="Phone number +7 ...">
             <div style="position: relative;">
                 <input type="password" name="password" id="password" placeholder="Password">
                 <button type="button" class="reveal-password" id="togglePassword"><img src="https://img.icons8.com/material-rounded/24/000000/visible.png"/></button>
@@ -124,20 +124,29 @@
         </form>
     </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
-        inputs.forEach(input => {
-            input.addEventListener("focus", function() {
-                this.classList.add("active");
+        document.addEventListener("DOMContentLoaded", function() {
+            const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
+            inputs.forEach(input => {
+                input.addEventListener("focus", function() {
+                    this.classList.add("active");
+                });
+                input.addEventListener("blur", function() {
+                    if (this.value === '') {
+                        this.classList.remove("active");
+                    }
+                });
             });
-            input.addEventListener("blur", function() {
-                if (this.value === '') {
-                    this.classList.remove("active");
-                }
+
+            const passwordField = document.getElementById('password');
+            const togglePassword = document.getElementById('togglePassword');
+
+            togglePassword.addEventListener('click', function() {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                this.querySelector('img').setAttribute('src', type === 'password' ? 'https://img.icons8.com/material-rounded/24/000000/visible.png' : 'https://img.icons8.com/material-rounded/24/000000/invisible.png');
             });
         });
-    });
-</script>
+    </script>
 </body>
 </html>
 

@@ -1,5 +1,5 @@
 <%@ include file="common/header.jspf"%>
-<title>Add Todo</title>
+<title>Add Transfer</title>
 <style>
     /* Set a dark background color */
     body {
@@ -61,11 +61,11 @@
 <body>
 <%@ include file="common/navigation.jspf"%>
 <div class="container">
-    <h1>Add Todo</h1>
-    <form:form method="post" modelAttribute="todo">
+    <h1>Add Transfer</h1>
+    <form:form method="post" modelAttribute="Transfer">
         <fieldset class="mb-3">
             <label for="description">Description</label>
-            <form:input type="text" path="description" required="required" placeholder="Enter todo description"/>
+            <form:input type="text" path="description" required="required" placeholder="Enter Transfer description"/>
             <form:errors path="description" cssClass="text-bg-warning"/>
         </fieldset>
         <fieldset class="mb-3">
@@ -75,7 +75,7 @@
         </fieldset>
         <input type="hidden" id="id" name="id" required="required"/>
         <input type="hidden" id="done" name="done" required="required"/>
-        <input type="submit" value="Add Todo">
+        <input type="submit" value="Add Transfer">
     </form:form>
 </div>
 <script src="webjars/jquery/3.6.4/jquery.min.js"></script>
