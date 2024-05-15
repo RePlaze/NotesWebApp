@@ -109,6 +109,9 @@
     .btn:hover {
         transform: translateY(-2px);
     }
+    label {
+    color: #ffffff ;
+    }
 </style>
 </head>
 <body>
@@ -147,22 +150,26 @@
 <script src="webjars/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script src="webjars/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.en-GB.min.js"></script>
 <script>
+    // Clear error message when the page is loaded or refreshed
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("error").innerText = "";
+    });
 $(document).ready(function () {
     // Function to validate phone number input
     $('#phone').on('input', function () {
         // Remove non-digits characters
         var phoneNumber = $(this).val().replace(/\D/g, '');
-        // Check if phone number is empty or not digits
-        if (phoneNumber.length === 0 || !(/^\d+$/.test(phoneNumber))) {
-            $('#phoneError').show(); // Show error message
-            $('#submitTransfer').prop('disabled', true).fadeOut(200); // Disable and fade out "Done" button with 200ms duration
-        } else if (phoneNumber.length !== 11) {
-            // If the length is not exactly 11 digits
-            $('#phoneError').hide(); // Hide error message
-            $('#submitTransfer').prop('disabled', true).fadeOut(200); // Disable and fade out "Done" button with 200ms duration
-        } else {
+        // Limit to 11 digits
+        phoneNumber = phoneNumber.substring(0, 11);
+        // Update the value in the input field
+        $(this).val(phoneNumber);
+        // Check if phone number is exactly 11 digits
+        if (phoneNumber.length === 11) {
             $('#phoneError').hide(); // Hide error message
             $('#submitTransfer').prop('disabled', false).fadeIn(200); // Enable and fade in "Done" button with 200ms duration
+        } else {
+            $('#phoneError').show(); // Show error message
+            $('#submitTransfer').prop('disabled', true).fadeOut(200); // Disable and fade out "Done" button with 200ms duration
         }
     });
 

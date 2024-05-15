@@ -15,7 +15,11 @@ public class LoginController {
     }
 
     @GetMapping("login")
-    public String showLoginPage() {
+    public String showLoginPage(@RequestParam(required = false) String msg, ModelMap model) {
+        // Clear the error message when the page is loaded or updated
+        model.addAttribute("error", "");
+        // Set a flag to track form submission
+        model.addAttribute("submitted", false);
         return "login";
     }
 
@@ -23,12 +27,15 @@ public class LoginController {
     public String handleLogin(@RequestParam String username,
                               @RequestParam String password,
                               ModelMap model) {
-        if (authenticationService.authenticate(username, password)) {
+        // Set the form submission flag to true
+        model.addAttribute("submitted", true);
+
+        if (!authenticationService.authenticate(username, password)) {
+            return "login";
+        } else {
             model.addAttribute("username", username);
             return "redirect:list-Transfers";
-        } else {
-            model.addAttribute("error", "Invalid username or password");
-            return "login";
         }
     }
 }
+

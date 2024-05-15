@@ -1,6 +1,6 @@
 <%@ include file="common/header.jspf"%>
 
-<title>Login Page</title>
+<title>Login page</title>
 <style>
     body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -106,49 +106,56 @@
 
 </style>
 <body id="particles-js">
-    <div class="container">
-        <form method="post" class="box" action="/login">
-            <h4>Login</h4>
-            <!-- Display error message if present -->
-            <c:if test="${not empty error}">
-                <p class="error" style="font-weight: bold; color: #ff0000;">${error}</p>
-            </c:if>
-            <c:if test="${not empty msg}">
-                <script>alert('${msg}');</script>
-            </c:if>
-            <input type="text" name="username" placeholder="Phone number +7 ...">
-             <div style="position: relative;">
-                            <input type="password" name="password" id="password" placeholder="Password">
-                            <button type="button" class="reveal-password" id="togglePassword"><img src="https://img.icons8.com/material-rounded/24/000000/visible.png"/></button>
-                        </div>
-            <input type="submit" class="btn1" value="Login">
+<div class="container">
+    <form method="post" class="box" action="/login">
+        <h4>Login</h4>
+        <!-- Your input fields and submit button -->
+        <input type="text" name="username" placeholder="Phone number: 79136663344" pattern="[0-9]{11}" title="Please enter exactly 11 digits">
+        <div style="position: relative;">
+            <input type="password" name="password" id="password" placeholder="Password">
+            <button type="button" class="reveal-password" id="togglePassword"><img src="https://img.icons8.com/material-rounded/24/000000/visible.png"/></button>
+        </div>
+        <input type="submit" class="btn1" value="Login">
             <p></p>
             <p>Dont have a account? <a href="registration"> Registrate </a></p>
-        </form>
-    </div>
+    </form>
+</div>
 <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
-            inputs.forEach(input => {
-                input.addEventListener("focus", function() {
-                    this.classList.add("active");
-                });
-                input.addEventListener("blur", function() {
-                    if (this.value === '') {
-                        this.classList.remove("active");
-                    }
-                });
+    document.addEventListener("DOMContentLoaded", function() {
+        const phoneNumberInput = document.querySelector('input[name="username"]');
+
+        phoneNumberInput.addEventListener("input", function(event) {
+            const inputValue = event.target.value;
+            const onlyNumbers = inputValue.replace(/\D/g, ''); // Remove non-digit characters
+
+            if (onlyNumbers.length > 11) {
+                event.target.value = onlyNumbers.slice(0, 11); // Trim input to 11 digits
+            } else {
+                event.target.value = onlyNumbers; // Update input value to contain only digits
+            }
+        });
+
+        const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
+        inputs.forEach(input => {
+            input.addEventListener("focus", function() {
+                this.classList.add("active");
             });
-
-            const passwordField = document.getElementById('password');
-            const togglePassword = document.getElementById('togglePassword');
-
-            togglePassword.addEventListener('click', function() {
-                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordField.setAttribute('type', type);
-                this.querySelector('img').setAttribute('src', type === 'password' ? 'https://img.icons8.com/material-rounded/24/000000/visible.png' : 'https://img.icons8.com/material-rounded/24/000000/invisible.png');
+            input.addEventListener("blur", function() {
+                if (this.value === '') {
+                    this.classList.remove("active");
+                }
             });
         });
-    </script>
+
+        const passwordField = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.querySelector('img').setAttribute('src', type === 'password' ? 'https://img.icons8.com/material-rounded/24/000000/visible.png' : 'https://img.icons8.com/material-rounded/24/000000/invisible.png');
+        });
+    });
+</script>
 </body>
 </html>

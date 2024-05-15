@@ -114,7 +114,7 @@
             <c:if test="${not empty error}">
                 <p class="error" style="font-weight: bold; color: #ff0000;">${error}</p>
             </c:if>
-            <input type="text" name="username" placeholder="Phone number +7 ...">
+                <input type="text" name="username" placeholder="Phone number: 79136663344" pattern="[0-9]{11}" title="Please enter exactly 11 digits">
             <div style="position: relative;">
                 <input type="password" name="password" id="password" placeholder="Password">
                 <button type="button" class="reveal-password" id="togglePassword"><img src="https://img.icons8.com/material-rounded/24/000000/visible.png"/></button>
@@ -124,7 +124,20 @@
         </form>
     </div>
 <script>
-        document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function() {
+                const phoneNumberInput = document.querySelector('input[name="username"]');
+
+                phoneNumberInput.addEventListener("input", function(event) {
+                    const inputValue = event.target.value;
+                    const onlyNumbers = inputValue.replace(/\D/g, ''); // Remove non-digit characters
+
+                    if (onlyNumbers.length > 11) {
+                        event.target.value = onlyNumbers.slice(0, 11); // Trim input to 11 digits
+                    } else {
+                        event.target.value = onlyNumbers; // Update input value to contain only digits
+                    }
+                });
+
             const inputs = document.querySelectorAll('input[type="text"], input[type="password"]');
             inputs.forEach(input => {
                 input.addEventListener("focus", function() {
