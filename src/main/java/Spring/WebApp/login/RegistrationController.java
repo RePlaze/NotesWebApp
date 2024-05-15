@@ -23,19 +23,12 @@ public class RegistrationController {
                                      @RequestParam String password,
                                      @RequestParam String repeatPassword,
                                      ModelMap model) {
-        // Check for empty fields
-        if (username.isEmpty() || password.isEmpty() || repeatPassword.isEmpty()) {
-            model.addAttribute("error", "All fields are required");
+        String error = validateRegistration(username, password, repeatPassword);
+        if (error != null) {
+            model.addAttribute("error", error);
             return "registration";
         }
 
-        // Check if password and repeat password match
-        if (!password.equals(repeatPassword)) {
-            model.addAttribute("error", "Passwords do not match");
-            return "registration";
-        }
-
-        // Attempt to register the user
         boolean registrationResult = authenticationService.registerUser(username, password);
         if (registrationResult) {
             return "login";
@@ -45,5 +38,15 @@ public class RegistrationController {
         }
     }
 
+    private String validateRegistration(String username, String password, String repeatPassword) {
+        if (username.isEmpty() || password.isEmpty() || repeatPassword.isEmpty()) {
+            return "All fields are required";
+        }
 
+        if (!password.equals(repeatPassword)) {
+            return "Passwords do not match";
+        }
+
+        return null; // No error
+    }
 }

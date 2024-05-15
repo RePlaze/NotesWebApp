@@ -1,5 +1,7 @@
 package Spring.WebApp.login;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
@@ -7,68 +9,74 @@ import java.sql.*;
 @Service
 public class AuthenticationService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
+
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/crud";
+    private static final String DB_USERNAME = "root";
+    private static final String DB_PASSWORD = "14231568Z0a9!";
+
+    private static final String SELECT_QUERY = "SELECT * FROM users WHERE username = ? AND password = ?";
+    private static final String INSERT_QUERY = "INSERT INTO users (username, password, balance) VALUES (?, ?, ?)";
+    private static final String CHECK_USERNAME_QUERY = "SELECT username FROM users WHERE username = ?";
+
+    // Authenticates a user by checking username and password in the database
     public boolean authenticate(String username, String password) {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/crud", "root", "14231568Z0a9!"
-            );
-
-            PreparedStatement preparedStatement = connection.prepareStatement(
-                    "SELECT * FROM users WHERE username = ? AND password = ?");
-
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = prepareStatement(connection, SELECT_QUERY)) {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next()) {
-                return true;
-            } else {
-                System.out.println("Invalid username or password");
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
             }
-
-            connection.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            logger.error("Error occurred while authenticating user", e);
+            return false;
         }
-        return false;
     }
 
+    // Registers a new user by inserting username, password, and default balance into the database
     public boolean registerUser(String username, String password) {
-        if (username.isEmpty() || password.isEmpty())
-            return false; // Empty fields
-
-        if (usernameExists(username))
-            return false; // Username already exists
-
-        String sql = "INSERT INTO users (username, password,balance) VALUES (?, ?, ?)";
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/crud", "root", "14231568Z0a9!");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, username);
-            stmt.setString(2, password);
-            stmt.setString(3, "1000");
-            int rowsInserted = stmt.executeUpdate();
-            return rowsInserted > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        if (isEmpty(username) || isEmpty(password) || usernameExists(username)) {
             return false;
         }
-
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = prepareStatement(connection, INSERT_QUERY)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            preparedStatement.setString(3, "1000");
+            return preparedStatement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            logger.error("Error occurred while registering user", e);
+            return false;
+        }
     }
 
+    // Checks if a username already exists in the database
     private boolean usernameExists(String username) {
-        // Check if username exists in the database
-        String sql = "SELECT username FROM users WHERE username = ?";
-
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/crud", "root", "14231568Z0a9!");
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, username);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next(); // Returns true if username exists in the database
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = prepareStatement(connection, CHECK_USERNAME_QUERY)) {
+            preparedStatement.setString(1, username);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                return resultSet.next();
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error occurred while checking username existence", e);
             return false;
         }
+    }
+
+    // Creates a prepared statement for the given SQL query
+    private PreparedStatement prepareStatement(Connection connection, String sql) throws SQLException {
+        return connection.prepareStatement(sql);
+    }
+
+    // Establishes a connection to the database
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+    }
+
+    // Checks if a string is null or empty
+    private boolean isEmpty(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

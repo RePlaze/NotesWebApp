@@ -17,31 +17,6 @@
         padding: 20px;
     }
 
-    /* Style the Transfer card */
-    .transfer-card {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        margin-bottom: 20px;
-        transition: all 0.8s ease; /* Smooth transition */
-    }
-
-    .transfer-card h2 {
-        font-size: 1.5rem;
-        margin-top: 0;
-        margin-bottom: 10px;
-    }
-
-    .transfer-card p {
-        margin: 0;
-        color: #666;
-    }
-
-    .transfer-actions {
-        margin-top: 10px;
-    }
-
     /* Style the buttons */
     .btn {
         padding: 8px 16px;
@@ -56,12 +31,6 @@
         color: #fff;
     }
 
-    .btn-outline-dark {
-        background-color: transparent;
-        border: 1px solid #343a40;
-        color: #343a40;
-    }
-
     .btn-cancel {
         background-color: #383a40 !important;
         border-color: #535c66T !important;
@@ -74,13 +43,17 @@
         color: #fff !important;
     }
 
-    .btn.disabled {
-        pointer-events: none;
-        opacity: 0.6;
+    /* Style the headings */
+    h1, h3 {
+        text-align: center;
+        color: #333;
     }
 
-    .btn:hover {
-        transform: translateY(-2px);
+    /* Style the error message */
+    .error-message {
+        color: red;
+        font-size: 0.8rem;
+        margin-top: 0.2rem;
     }
 
     /* Style the Transfer creation card */
@@ -132,22 +105,9 @@
         z-index: 2;
     }
 
-    input[type="text"],
-    input[type="tel"] {
-        color: #333; /* Set text color for input fields */
-    }
-
-    h1 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        text-align: center;
-        color: #333;
-    }
-
-    .error-message {
-        color: red;
-        font-size: 0.8rem;
-        margin-top: 0.2rem;
+    /* Hover effect on buttons */
+    .btn:hover {
+        transform: translateY(-2px);
     }
 </style>
 </head>
@@ -156,16 +116,16 @@
 <h1>Phone: ${username}</h1>
 <h3>Balance: ${balance}<a href="/list-Transfers"> Update</a></h3>
 <div class="container">
-    <h1 style="text-align: center;">Transfer History</h1>
+    <h1>Transfer History</h1>
     <button id="addTransferButton" class="btn btn-primary mb-3 fade-in">Send Money</button>
     <div id="TransferCreationCard" class="transfer-creation-card">
         <form id="addTransferForm" method="post" action="/add-Transfer">
             <div class="form-group mb-3">
-                <label for="description" style="color: #fff;">Amount</label>
+                <label for="description">Amount</label>
                 <input type="text" id="amount" name="amount" required="required" class="form-control" placeholder="150,5 P" pattern="\d+(\,\d{0,1})?" />
             </div>
             <div class="form-group mb-3">
-                <label for="phone" style="color: #fff;">Phone Number</label>
+                <label for="phone">Phone Number</label>
                 <input type="tel" id="phone" name="phone" required="required" class="form-control" placeholder="Enter phone number" maxlength="11"/>
                 <div id="phoneError" class="error-message" style="display: none;">Please enter a valid phone number</div>
             </div>

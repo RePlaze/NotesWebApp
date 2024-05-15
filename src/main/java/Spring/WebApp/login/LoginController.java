@@ -27,10 +27,8 @@ public class LoginController {
             model.addAttribute("username", username);
             return "redirect:list-Transfers";
         } else {
-            model.addAttribute("msg", "Invalid username or password");
+            model.addAttribute("error", "Invalid username or password");
+            return "login";
         }
-        return "login";
     }
-
-
 }
