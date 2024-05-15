@@ -18,6 +18,16 @@ public class User {
     @NotNull
     private String password;
 
+    public int getBalance() {
+        return balance;
+    }
+
+    public void setBalance(int balance) {
+        this.balance = balance;
+    }
+
+    private int balance;
+
     public Long getId() {
         return id;
     }

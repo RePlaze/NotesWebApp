@@ -153,6 +153,7 @@
 <body>
 <%@ include file="common/navigation.jspf"%>
 <h1>Phone: ${username}</h1>
+<h3>Balance: ${balance}</h1>
 <div class="container">
     <h1 style="text-align: center;">Transfer History</h1>
     <button id="addTransferButton" class="btn btn-primary mb-3 fade-in">Send Money</button>

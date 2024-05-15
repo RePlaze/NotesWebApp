@@ -6,7 +6,9 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.*;
 import java.time.LocalDate;
+
 @Controller
 @SessionAttributes("username")
 public class TransferController {
@@ -21,6 +23,7 @@ public class TransferController {
     public String listAllTransfers(ModelMap model) {
         String username = (String) model.get("username");
         model.addAttribute("username", username);
+        model.addAttribute("balance", getBalance(username));
         return "listTransfers";
     }
 
@@ -32,40 +35,26 @@ public class TransferController {
         return "Transfer";
     }
 
-    // Show page to update a Transfer
-    @GetMapping("update-Transfer")
-    public String showUpdateTransferPage(@RequestParam int id, ModelMap model) {
-        model.addAttribute("Transfer", transferService.findById(id));
-        return "Transfer";
-    }
+    private String getBalance(String username) {
+        String url = "jdbc:mysql://localhost:3306/crud";
+        String user = "root";
+        String pass = "14231568Z0a9!";
+        String sql = "SELECT balance FROM users WHERE username = ?";
+        int balance = 0;
 
-    // Add a new Transfer
-    @PostMapping("add-Transfer")
-    public String addNewTransfer(ModelMap model, @Valid Transfer Transfer, BindingResult result) {
-        if (result.hasErrors() || Transfer.getDescription().length() < 10) {
-            result.rejectValue("description", "length", "Description should be at least 10 characters long");
-            return "Transfer";
+        try (Connection conn = DriverManager.getConnection(url, user, pass);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                balance = rs.getInt("balance");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        String username = (String) model.get("username");
-        transferService.addTransfer(username, Transfer.getDescription(), LocalDate.now(), false);
-        return "redirect:list-Transfers";
+        System.out.println(balance);
+        return String.valueOf(balance);
     }
 
-    // Delete a Transfer
-    @GetMapping("delete-Transfer")
-    public String deleteTransfer(@RequestParam int id) {
-        transferService.deleteById(id);
-        return "redirect:list-Transfers";
-    }
-
-    // Update a Transfer
-    @PostMapping("update-Transfer")
-    public String updateTransfer(ModelMap model, @Valid Transfer Transfer, BindingResult result) {
-        if (result.hasErrors() || Transfer.getDescription().length() < 10) {
-            result.rejectValue("description", "length", "Description should be at least 10 characters long");
-            return "Transfer";
-        }
-        transferService.updateTransfer(Transfer);
-        return "redirect:list-Transfers";
-    }
 }
