@@ -143,17 +143,18 @@
         text-align: center;
         color: #333;
     }
-.error-message {
-    color: red;
-    font-size: 0.8rem;
-    margin-top: 0.2rem;
-}
+
+    .error-message {
+        color: red;
+        font-size: 0.8rem;
+        margin-top: 0.2rem;
+    }
 </style>
 </head>
 <body>
 <%@ include file="common/navigation.jspf"%>
 <h1>Phone: ${username}</h1>
-<h3>Balance: ${balance}</h1>
+<h3>Balance: ${balance}<a href="/list-Transfers"> Update</a></h3>
 <div class="container">
     <h1 style="text-align: center;">Transfer History</h1>
     <button id="addTransferButton" class="btn btn-primary mb-3 fade-in">Send Money</button>
@@ -161,11 +162,11 @@
         <form id="addTransferForm" method="post" action="/add-Transfer">
             <div class="form-group mb-3">
                 <label for="description" style="color: #fff;">Amount</label>
-                    <input type="text" id="amount" name="amount" required="required" class="form-control" placeholder="150,5 P" pattern="\d+(\,\d{0,1})?" />
+                <input type="text" id="amount" name="amount" required="required" class="form-control" placeholder="150,5 P" pattern="\d+(\,\d{0,1})?" />
             </div>
             <div class="form-group mb-3">
                 <label for="phone" style="color: #fff;">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" required="required" class="form-control" placeholder="Enter phone number" maxlength="11"/>
+                <input type="tel" id="phone" name="phone" required="required" class="form-control" placeholder="Enter phone number" maxlength="11"/>
                 <div id="phoneError" class="error-message" style="display: none;">Please enter a valid phone number</div>
             </div>
             <input type="hidden" id="id" name="id" required="required"/>
@@ -178,10 +179,6 @@
         <div class="transfer-card">
             <h2>${Transfer.description}</h2>
             <p>Target Date: ${Transfer.formattedTargetDate}</p>
-            <div class="transfer-actions">
-                <a href="update-Transfer?id=${Transfer.id}" class="btn btn-primary">Edit</a>
-                <a href="delete-Transfer?id=${Transfer.id}" class="btn btn-outline-dark">Delete</a>
-            </div>
         </div>
     </c:forEach>
 </div>
@@ -222,20 +219,51 @@ $(document).ready(function () {
         $(this).val(amount);
     });
 
-    // Allow only digits to be typed in the phone number input field
-    $('#phone').on('keypress', function (event) {
-        var keyCode = event.which;
-        if (keyCode < 48 || keyCode > 57) {
-            event.preventDefault(); // Prevent typing non-digit characters
-        }
-    });
-
     // Toggle the Transfer creation card
     $('#addTransferButton').click(function () {
         $('#TransferCreationCard').toggleClass('active');
         $('#addTransferButton').toggleClass('btn-cancel');
         $('#addTransferButton').toggleClass('disabled');
         $('#addTransferButton').toggleClass('fade-in fade-out');
+    });
+
+    // Handle "Done" button click
+    $('#submitTransfer').click(function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Check if form is valid
+        if ($('#addTransferForm')[0].checkValidity()) {
+            // Extract form data
+            var formData = $('#addTransferForm').serialize();
+            var phone = $('#phone').val();
+            var amount = parseFloat($('#amount').val());
+
+            // Call withdrawAmount function
+            $.post('/withdrawAmount', { phone: phone, amount: amount }, function (withdrawResponse) {
+                console.log(withdrawResponse); // Log response
+                if (withdrawResponse.success) {
+                    console.log("Amount withdrawn successfully");
+                    // Call addTransfer function
+                    $.post('/addTransfer', formData, function (transferResponse) {
+                        console.log(transferResponse); // Log response
+                        if (transferResponse.success) {
+                            console.log("Transfer added successfully");
+                            // Reset form fields and hide Transfer creation card
+                            $('#addTransferForm')[0].reset();
+                            $('#TransferCreationCard').removeClass('active');
+                            $('#addTransferButton').removeClass('btn-cancel');
+                            $('#addTransferButton').removeClass('fade-out').addClass('fade-in');
+                            $('#addTransferButton').removeClass('disabled');
+                            // You can add further logic here if needed
+                        } else {
+                            console.error("Failed to add transfer");
+                        }
+                    });
+                } else {
+                    console.error("Failed to withdraw amount");
+                }
+            });
+        }
     });
 
     // Cancel Transfer creation
@@ -245,22 +273,7 @@ $(document).ready(function () {
         $('#addTransferButton').removeClass('fade-out').addClass('fade-in');
         $('#addTransferButton').removeClass('disabled');
     });
-
-    // Handle form submission
-    $('#addTransferForm').submit(function (event) {
-        event.preventDefault();
-        var formData = $(this).serialize();
-        $.post('/add-Transfer', formData, function (response) {
-            $('#TransferCreationCard').removeClass('active');
-            $('#addTransferButton').removeClass('btn-cancel');
-            $('#addTransferButton').removeClass('fade-out').addClass('fade-in');
-            $('#addTransferButton').removeClass('disabled');
-            $('.container').html(response);
-            $('.transfer-card').addClass('animated fadeInUp');
-        });
-    });
 });
-
 </script>
 </body>
 </html>

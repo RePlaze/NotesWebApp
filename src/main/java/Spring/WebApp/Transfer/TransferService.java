@@ -1,53 +1,56 @@
 package Spring.WebApp.Transfer;
 
-import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
+import java.sql.*;
+import java.util.Date;
 
 @Service
 public class TransferService {
 
-    private static final List<Spring.WebApp.Transfer.Transfer> Transfers = new ArrayList<>();
-    private static int TransfersCount = 0;
+    private final String url = "jdbc:mysql://localhost:3306/crud";
+    private final String username = "root";
+    private final String password = "14231568Z0a9!";
 
-
-    // Static initialization block to pre-populate some sample Transfers
-    static {
-        Transfers.add(new Spring.WebApp.Transfer.Transfer(++TransfersCount, "in28minutes", "Learn AWS", LocalDate.now(), false));
-        Transfers.add(new Spring.WebApp.Transfer.Transfer(++TransfersCount, "in28minutes", "DevOps", LocalDate.now(), false));
-        Transfers.add(new Spring.WebApp.Transfer.Transfer(++TransfersCount, "in28minutes", "Full Stack Development", LocalDate.now(), false));
+    public void withdrawAmount(String Username, double amount, String phone) {
+        String sqlUpdateBalance = "UPDATE users SET balance = balance - ? WHERE username = ?";
+        String sqlGetUserId = "SELECT id FROM users WHERE username = ?";
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            // Update user balance
+            try (PreparedStatement stmtUpdateBalance = conn.prepareStatement(sqlUpdateBalance)) {
+                stmtUpdateBalance.setDouble(1, amount);
+                stmtUpdateBalance.setString(2, Username);
+                int rowsAffected = stmtUpdateBalance.executeUpdate();
+                if (rowsAffected == 1) {
+                    // Retrieve user ID
+                    try (PreparedStatement stmtGetUserId = conn.prepareStatement(sqlGetUserId)) {
+                        stmtGetUserId.setString(1, Username);
+                        ResultSet rs = stmtGetUserId.executeQuery();
+                        if (rs.next()) {
+                            int userId = rs.getInt("id");
+                            addTransfer(Username, amount, phone, userId);
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    // Method to find Transfers by name
-    public List<Spring.WebApp.Transfer.Transfer> findByname(String name) {
-        return Transfers;
+    private void addTransfer(String Username, double amount, String phone, int userId) {
+        Date currentDate = new Date();
+        String sql = "INSERT INTO transfers (user_id, amount, phone, transfer_date) VALUES (?, ?, ?, ?)";
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setDouble(2, amount);
+            stmt.setString(3, phone);
+            stmt.setDate(4, new java.sql.Date(currentDate.getTime()));
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    // Method to add a new Transfer
-    public void addTransfer(String name, String description, LocalDate targetDate, boolean done) {
-        Spring.WebApp.Transfer.Transfer Transfer = new Transfer(++TransfersCount, name, description, targetDate, done);
-        Transfers.add(Transfer);
-    }
 
-    // Method to delete a Transfer by id
-    public void deleteById(int id) {
-        Predicate<? super Spring.WebApp.Transfer.Transfer> predicate = Transfer -> Transfer.getId() == id;
-        Transfers.removeIf(predicate);
-    }
-
-    // Method to find a Transfer by id
-    public Spring.WebApp.Transfer.Transfer findById(int id) {
-        Predicate<? super Spring.WebApp.Transfer.Transfer> predicate = Transfer -> Transfer.getId() == id;
-        return Transfers.stream().filter(predicate).findFirst().orElse(null);
-    }
-
-    // Method to update a Transfer
-    public void updateTransfer(@Valid Spring.WebApp.Transfer.Transfer Transfer) {
-        deleteById(Transfer.getId()); // Remove the old Transfer
-        Transfers.add(Transfer); // Add the updated Transfer
-    }
 }

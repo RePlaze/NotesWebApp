@@ -3,12 +3,6 @@ package Spring.WebApp.login;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import Spring.WebApp.Transfer.TransferService.*;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 
 @Controller
 public class RegistrationController {
@@ -44,8 +38,6 @@ public class RegistrationController {
         // Attempt to register the user
         boolean registrationResult = authenticationService.registerUser(username, password);
         if (registrationResult) {
-            model.addAttribute("message", "Registration successful. You can now login.");
-//            updateBalance(username,1000);
             return "login";
         } else {
             model.addAttribute("error", "Registration failed. Please try again later.");
@@ -53,17 +45,5 @@ public class RegistrationController {
         }
     }
 
-    private void updateBalance(String username, int newBalance) {
-        String url = "jdbc:mysql://localhost:3306/crud";
-        String user = "root";
-        String pass = "14231568Z0a9!";
-        String sql = "UPDATE users SET Balance = 1000 WHERE username = ?";
-        try (Connection conn = DriverManager.getConnection(url, user, pass);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, username);
-            int rowsInserted = stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+
 }

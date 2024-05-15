@@ -1,31 +1,26 @@
 package Spring.WebApp.Transfer;
 
 import jakarta.validation.constraints.Size;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class Transfer {
 
-    public Transfer(int id, String name, String description, LocalDate targetDate, boolean done) {
+    private int id;
+    private double amount;
+    private String phone;
+    private LocalDate targetDate;
+
+    public Transfer(int id, double amount, String phone, LocalDate targetDate) {
         super();
         this.id = id;
-        this.name = name;
-        this.description = description;
+        this.amount = amount;
+        this.phone = phone;
         this.targetDate = targetDate;
-        this.done = done;
     }
 
-    // foo (getters & setters)
-
-    private int id;
-    private String name;
-    @Size(min=10, message = "At least 10 characters")
-    private String description;
-    private LocalDate targetDate;
-    private boolean done;
-
+    // Getters and setters for id, amount, phone, and targetDate
     public int getId() {
         return id;
     }
@@ -34,40 +29,27 @@ public class Transfer {
         this.id = id;
     }
 
-    public String getname() {
-        return name;
+    public double getAmount() {
+        return amount;
     }
 
-    public void setname(String name) {
-        this.name = name;
+    public void setAmount(double amount) {
+        this.amount = amount;
     }
 
-    public String getDescription() {
-        return description;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public LocalDate getTargetDate() {
         return targetDate;
     }
-    public String getFormattedTargetDate() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.ENGLISH);
-        return formatter.format(targetDate);
-    }
 
     public void setTargetDate(LocalDate targetDate) {
         this.targetDate = targetDate;
     }
-
-    public boolean isDone() {
-        return done;
-    }
-
-    public void setDone(boolean done) {
-        this.done = done;
-    }
-
 }
