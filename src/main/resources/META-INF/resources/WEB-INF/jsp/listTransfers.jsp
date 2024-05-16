@@ -148,12 +148,13 @@
             <button id="cancelAddTransfer" type="button" style="color: #535c66;" class="btn btn-cancel btn-block">Cancel</button>
         </form>
     </div>
-    <c:forEach items="${Transfers}" var="Transfer">
-        <div class="transfer-card">
-            <h2>${Transfer.description}</h2>
-            <p>Target Date: ${Transfer.formattedTargetDate}</p>
-        </div>
-    </c:forEach>
+<c:forEach items="${transfers}" var="transfer">
+    <div class="transfer-card">
+        <h2>Sender: ${transfer.senderUsername}</h2>
+        <p>Amount: ${transfer.amount}</p>
+        <p>Date: ${transfer.date}</p>
+    </div>
+</c:forEach>
 </div>
 <script src="webjars/jquery/3.6.4/jquery.min.js"></script>
 <script src="webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>

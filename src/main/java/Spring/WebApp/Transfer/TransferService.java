@@ -1,5 +1,7 @@
 package Spring.WebApp.Transfer;
 
+import Spring.WebApp.Database.DBConnection;
+import Spring.WebApp.Database.SQLQueries;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -10,21 +12,13 @@ import java.time.LocalDate;
 @Service
 public class TransferService {
 
-    private final Logger logger = LoggerFactory.getLogger(TransferService.class);
-
-    private final String url = "jdbc:mysql://localhost:3306/crud";
-    private final String username = "root";
-    private final String password = "14231568Z0a9!";
+    private static final Logger logger = LoggerFactory.getLogger(TransferService.class);
 
     public void withdrawAmount(String username, double amount, String phone) throws SQLException {
-        String sqlUpdateSenderBalance = "UPDATE users SET balance = balance - ? WHERE username = ?";
-        String sqlUpdateRecipientBalance = "UPDATE users SET balance = balance + ? WHERE username = ?";
-        String sqlAddTransfer = "INSERT INTO transfers (user_id, amount, phone, transfer_date) VALUES (?, ?, ?, ?)";
-
-        try (Connection conn = DriverManager.getConnection(url, this.username, password);
-             PreparedStatement stmtUpdateSenderBalance = conn.prepareStatement(sqlUpdateSenderBalance);
-             PreparedStatement stmtUpdateRecipientBalance = conn.prepareStatement(sqlUpdateRecipientBalance);
-             PreparedStatement stmtAddTransfer = conn.prepareStatement(sqlAddTransfer)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmtUpdateSenderBalance = conn.prepareStatement(SQLQueries.UPDATE_SENDER_BALANCE);
+             PreparedStatement stmtUpdateRecipientBalance = conn.prepareStatement(SQLQueries.UPDATE_RECIPIENT_BALANCE);
+             PreparedStatement stmtAddTransfer = conn.prepareStatement(SQLQueries.ADD_TRANSFER)) {
             conn.setAutoCommit(false);
             int senderId = getUserId(username, conn);
 
@@ -54,8 +48,7 @@ public class TransferService {
     }
 
     private int getUserId(String username, Connection conn) throws SQLException {
-        String sqlGetUserId = "SELECT id FROM users WHERE username = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sqlGetUserId)) {
+        try (PreparedStatement stmt = conn.prepareStatement(SQLQueries.SELECT_USER_ID)) {
             stmt.setString(1, username);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -67,9 +60,8 @@ public class TransferService {
     }
 
     public double getBalance(String username) throws SQLException {
-        String sql = "SELECT balance FROM users WHERE username = ?";
-        try (Connection conn = DriverManager.getConnection(url, this.username, password);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQLQueries.SELECT_BALANCE)) {
             stmt.setString(1, username);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -85,17 +77,13 @@ public class TransferService {
     }
 
     public boolean foundPhoneToTransfer(String phone) throws SQLException {
-        String sql = "SELECT username FROM users WHERE username = ?";
-        try (Connection conn = DriverManager.getConnection(url, username, password);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(SQLQueries.SELECT_USERNAME)) {
             stmt.setString(1, phone);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return true;
-                }
+                return rs.next();
             }
         }
-        return false;
     }
     public boolean isSameUser(String username1, String username2) {
         return username1.equals(username2);
