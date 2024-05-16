@@ -101,7 +101,7 @@ With these steps, you have configured the database connection for your Spring Bo
 
 5. **Access the Application:**
 
-   Once the application is running, you can access it at [http://localhost:8080](http://localhost:8080/logon).
+   Once the application is running, you can access it at [localhost:8080/login](http://localhost:8080/login).
 
 ### Libraries and Dependencies
 
