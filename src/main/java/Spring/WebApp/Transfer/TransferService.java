@@ -17,36 +17,40 @@ public class TransferService {
     private final String password = "14231568Z0a9!";
 
     public void withdrawAmount(String username, double amount, String phone) throws SQLException {
-        String sqlUpdateBalance = "UPDATE users SET balance = balance - ? WHERE username = ?";
+        String sqlUpdateSenderBalance = "UPDATE users SET balance = balance - ? WHERE username = ?";
+        String sqlUpdateRecipientBalance = "UPDATE users SET balance = balance + ? WHERE username = ?";
         String sqlAddTransfer = "INSERT INTO transfers (user_id, amount, phone, transfer_date) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = DriverManager.getConnection(url, this.username, password);
-             PreparedStatement stmtUpdateBalance = conn.prepareStatement(sqlUpdateBalance);
+             PreparedStatement stmtUpdateSenderBalance = conn.prepareStatement(sqlUpdateSenderBalance);
+             PreparedStatement stmtUpdateRecipientBalance = conn.prepareStatement(sqlUpdateRecipientBalance);
              PreparedStatement stmtAddTransfer = conn.prepareStatement(sqlAddTransfer)) {
             conn.setAutoCommit(false);
+            int senderId = getUserId(username, conn);
 
-            int userId = getUserId(username, conn);
-            if (userId != -1) {
-                stmtUpdateBalance.setDouble(1, amount);
-                stmtUpdateBalance.setString(2, username);
-                int rowsAffected = stmtUpdateBalance.executeUpdate();
-
-                if (rowsAffected == 1) {
-                    stmtAddTransfer.setInt(1, userId);
-                    stmtAddTransfer.setDouble(2, amount);
-                    stmtAddTransfer.setString(3, phone);
-                    stmtAddTransfer.setDate(4, Date.valueOf(LocalDate.now()));
-                    stmtAddTransfer.executeUpdate();
-
-                    conn.commit();
-                } else {
-                    conn.rollback();
-                    logger.error("Failed to update balance for user: {}", username);
-                }
+            if (senderId != -1 && executeUpdate(stmtUpdateSenderBalance, amount, username) == 1) {
+                executeUpdate(stmtUpdateRecipientBalance, amount, phone);
+                executeTransfer(stmtAddTransfer, senderId, amount, phone);
+                conn.commit();
             } else {
-                logger.error("User not found for username: {}", username);
+                conn.rollback();
+                logger.error("Failed to perform withdrawal for user: {}", username);
             }
         }
+    }
+
+    private int executeUpdate(PreparedStatement statement, double amount, String username) throws SQLException {
+        statement.setDouble(1, amount);
+        statement.setString(2, username);
+        return statement.executeUpdate();
+    }
+
+    private void executeTransfer(PreparedStatement statement, int userId, double amount, String phone) throws SQLException {
+        statement.setInt(1, userId);
+        statement.setDouble(2, amount);
+        statement.setString(3, phone);
+        statement.setDate(4, Date.valueOf(LocalDate.now()));
+        statement.executeUpdate();
     }
 
     private int getUserId(String username, Connection conn) throws SQLException {
@@ -93,7 +97,6 @@ public class TransferService {
         }
         return false;
     }
-
     public boolean isSameUser(String username1, String username2) {
         return username1.equals(username2);
     }

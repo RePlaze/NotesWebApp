@@ -37,9 +37,7 @@ public class TransferController {
             transferService.withdrawAmount(username, amount, phone);
             model.addAttribute("balance", newBalance);
             return "redirect:/list-Transfers";
-        } else {
-            model.addAttribute("error", "Insufficient balance to make this transfer");
-            return "errorPage";
         }
+        return "errorPage";
     }
 }
