@@ -45,4 +45,11 @@ public class TransferController {
         }
         return "errorPage";
     }
+
+    @GetMapping("/goToSettings")
+    public String goToSettings(ModelMap model) throws SQLException {
+        String username = (String) model.get("username");
+        int userId = TransferService.getUserId(username);
+        return "redirect:/Settings?id=" + userId;
+    }
 }

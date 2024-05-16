@@ -1,21 +1,146 @@
+**Web Application Setup Guide**
 
-# NotesWebApp
+This guide will help you set up the Spring Boot web application along with the required dependencies and SQL database.
 
-NotesWebApp is a Java Spring Boot web application that utilizes the following technologies:
+### Prerequisites
 
-## Preview
-![notesweb](https://user-images.githubusercontent.com/115911341/230725253-2d43cdc5-f5f7-4bb6-bef0-5cb7434578c9.gif)
+- Java Development Kit (JDK 20)
+- Maven
+- MySQL Database Server (or else)
 
-## Technology Stack
+### Steps to Setup
 
-- **Java Spring Boot**: The application is written in Java using the Spring Boot framework, which provides a robust set of tools and features for building web applications.
+1. **Clone the Repository:**
 
-- **MySQL**: The application uses a MySQL database to store and retrieve notes and user account information.
+   Clone the project repository from [GitHub](https://github.com) to your local machine.
 
-- **Thymeleaf**: Thymeleaf is a server-side Java template engine that is used to render the HTML views for the application.
+   ```bash
+   git clone <https://github.com/RePlaze/NotesWebApp.git>
+   ```
 
-- **Bootstrap**: Bootstrap is a popular front-end framework that is used to provide a responsive and visually appealing user interface.
+2. **Setup MySQL Database:**
 
-- **Spring Security**: Spring Security is used to handle user authentication and authorization, ensuring that only authenticated users can access their notes.
+   Create a MySQL database and execute the following SQL script to create the required tables:
 
-The use of Java Spring Boot and MySQL allows for a scalable and maintainable back-end, while Thymeleaf and Bootstrap provide a modern and responsive front-end experience for users. Spring Security ensures that the application is secure and user data is protected.
+   ```sql
+   CREATE TABLE profile (
+       ID int AUTO_INCREMENT PRIMARY KEY,
+       FullName varchar(100),
+       Email varchar(100),
+       Gender enum('Male','Female','Other'),
+       DateOfBirth date
+   );
+
+   CREATE TABLE transfers (
+       id int AUTO_INCREMENT PRIMARY KEY,
+       amount float,
+       phone varchar(11),
+       transfer_date date,
+       user_id int
+   );
+
+   CREATE TABLE users (
+       id int AUTO_INCREMENT PRIMARY KEY,
+       username varchar(50),
+       password varchar(100),
+       Balance float,
+       profile int
+   );
+   ```
+
+3. **Update Database Configuration:**
+
+   Open the `application.properties` file located in `src/main/resources` and update the database connection properties.
+
+   ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/<database-name>
+   spring.datasource.username=<username>
+   spring.datasource.password=<password>
+   ```
+**Database Connection Configuration**
+
+To establish a connection to your MySQL database in the Spring Boot application, follow these steps:
+
+1. **Create a MySQL Database:**
+
+   Ensure you have MySQL installed and create a database named `crud` or choose a different name according to your preference.
+
+2. **Configure Database Connection:**
+
+   Open the `application.properties` file located in `src/main/resources` and add the following configuration:
+
+   ```properties
+   spring.datasource.url=jdbc:mysql://localhost:3306/crud
+   spring.datasource.username=root
+   spring.datasource.password=password
+   ```
+
+   Modify the `url`, `username`, and `password` properties according to your MySQL database configuration.
+
+3. **Database Connection Class:**
+
+   The `DBConnection` class in the `Spring.WebApp.Database` package provides a method to obtain a connection to the database.
+
+   ```java
+   package Spring.WebApp.Database;
+
+   import java.sql.Connection;
+   import java.sql.DriverManager;
+   import java.sql.SQLException;
+
+   public class DBConnection {
+       private static final String URL = "jdbc:mysql://localhost:3306/crud";
+       private static final String USERNAME = "root";
+       private static final String PASSWORD = "password";
+
+       public static Connection getConnection() throws SQLException {
+           return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+       }
+   }
+   ```
+   Ensure that the `URL`, `USERNAME`, and `PASSWORD` variables match your MySQL database credentials.
+
+
+4. **Use the Connection in Your Application:**
+
+   You can now use the `getConnection()` method of the `DBConnection` class to obtain a database connection wherever needed in your Spring Boot application.
+
+   ```java
+   Connection connection = DBConnection.getConnection();
+   ```
+
+With these steps, you have configured the database connection for your Spring Boot application, allowing it to interact with the MySQL database seamlessly.
+4. **Run the Application:**
+
+   Navigate to the project directory and run the following Maven command to start the Spring Boot application:
+
+   ```bash
+   mvn spring-boot:run
+   ```
+
+5. **Access the Application:**
+
+   Once the application is running, you can access it at [http://localhost:8080](http://localhost:8080).
+
+### Libraries and Dependencies
+
+- **Spring Boot**
+- **MySQL Connector Java:** For connecting to MySQL database.
+- **Hibernate Validator:** An implementation of the Bean Validation API.
+- *Jakarta Servlet JSP JSTL API:* For JSP and JSTL support.
+- *GlassFish JSTL:* For JSTL implementation.
+- *WebJars:* For managing frontend dependencies such as Bootstrap, jQuery, and Bootstrap Datepicker.
+
+### Project Structure
+
+- `src/main/java`: Contains Java source files.
+- `src/main/resources`: Contains application properties and resource files.
+- `src/main/webapp`: Contains JSP files for views.(html)
+- `pom.xml`: Contains project dependencies and configuration.
+
+### Additional Notes
+
+- Make sure to adjust the database connection properties according to your MySQL configuration.
+- You can customize the application further by modifying the Java source files and JSP views as needed.
+
+That's it! You have successfully set up the Spring Boot web application with MySQL database.

@@ -68,76 +68,89 @@
             color: #ff3b30;
             margin-top: 5px;
         }
+
+        .success-message {
+            opacity: 1;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 3px;
+            color: #155724;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .return-button {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .return-button:hover {
+            background-color: #0053b3;
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>Settings</h1>
-    <form id="settingsForm" action="updateSettings.jsp" method="post" onsubmit="return validateForm()">
+    <c:if test="${not empty successMessage}">
+        <div id="successMessage" class="success-message">${successMessage}</div>
+    </c:if>
+    <form id="settingsForm" action="/updateSettings" method="post" onsubmit="return validateForm()">
+        <input type="hidden" name="userId" value="${userId}">
         <label for="fullName">Full Name:</label>
-        <input type="text" id="fullName" name="fullName" required maxlength="50" oninput="limitFullNameInput(this);"
-               value="${fullName}"> <!-- Populate with user's full name -->
-        <span id="fullNameError" class="error-message"></span>
+        <input type="text" id="fullName" name="fullName" required maxlength="50" value="${fullName}">
 
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required value="${email}"> <!-- Populate with user's email -->
-        <span id="emailError" class="error-message"></span>
+        <input type="email" id="email" name="email" required value="${email}">
 
         <label for="gender">Gender:</label>
         <select id="gender" name="gender">
-            <option value="male" ${gender == 'male' ? 'selected' : ''}>Male</option> <!-- Populate and select user's gender -->
+            <option value="male" ${gender == 'male' ? 'selected' : ''}>Male</option>
             <option value="female" ${gender == 'female' ? 'selected' : ''}>Female</option>
             <option value="other" ${gender == 'other' ? 'selected' : ''}>Other</option>
         </select>
 
         <label for="dob">Date of Birth:</label>
-        <input type="date" id="dob" name="dob" required maxlength="10" pattern="\d{4}-\d{2}-\d{2}"
-               value="${dateOfBirth}"> <!-- Populate with user's date of birth -->
-        <span id="dobError" class="error-message"></span>
+        <input type="date" id="dob" name="dob" required maxlength="10" value="${dateOfBirth}">
 
         <input type="submit" value="Save Changes">
     </form>
+    <a href="/list-Transfers" class="return-button">Return to Main Page</a>
 </div>
 <script>
-    function limitFullNameInput(input) {
-        var value = input.value.trim();
-
-        if (value.length > 50) {
-            input.value = value.slice(0, 50);
-            value = input.value.trim(); // Update value after truncation
-        }
-
-        var spaceCount = (value.match(/\s/g) || []).length;
-        var regex = /^[a-zA-Z\u00C0-\u024F]+(?:\s+[a-zA-Z\u00C0-\u024F]+){0,1}$/;
-
-        if (!regex.test(value)) {
-            input.value = value.replace(/[^a-zA-Z\u00C0-\u024F\s]/g, ''); // Remove invalid characters
-            document.getElementById("fullNameError").textContent = "Please enter a valid full name (only Latin letters, max 2 spaces)";
-        } else {
-            document.getElementById("fullNameError").textContent = "";
-        }
-    }
-
     function validateForm() {
         var email = document.getElementById("email").value;
         var dob = document.getElementById("dob").value;
 
-        // Email validation
         var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
-            document.getElementById("emailError").textContent = "Please enter a valid email address";
+            alert("Please enter a valid email address");
             return false;
-        } else {
-            document.getElementById("emailError").textContent = "";
         }
 
-        // Date of Birth validation
         var dobPattern = /^\d{4}-\d{2}-\d{2}$/;
         if (!dobPattern.test(dob)) {
-            document.getElementById("dobError").textContent = "Please enter a valid date in YYYY-MM-DD format";
+            alert("Please enter a valid date in YYYY-MM-DD format");
             return false;
-        } else {
-            document.getElementById("dobError").textContent = "";
         }
 
         return true;

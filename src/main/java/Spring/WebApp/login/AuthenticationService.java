@@ -49,9 +49,14 @@ public class AuthenticationService {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQLQueries.INSERT_PROFILE)) {
             preparedStatement.setInt(1, getUserId(username));
+            preparedStatement.setString(2, "Name");
+            preparedStatement.setString(3, "test@gmail.com");
+            preparedStatement.setString(4, "Other");
+            preparedStatement.setDate(5, Date.valueOf("2000-01-01"));
             preparedStatement.executeUpdate();
         }
     }
+
 
     private boolean usernameExists(String username) throws SQLException {
         return executeExistsQuery(SQLQueries.SELECT_USERNAME, username);
