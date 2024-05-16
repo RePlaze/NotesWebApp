@@ -57,25 +57,6 @@ This guide will help you set up the Spring Boot web application along with the r
    spring.datasource.username=<username>
    spring.datasource.password=<password>
    ```
-**Database Connection Configuration**
-
-To establish a connection to your MySQL database in the Spring Boot application, follow these steps:
-
-1. **Create a MySQL Database:**
-
-   Ensure you have MySQL installed and create a database named `crud` or choose a different name according to your preference.
-
-2. **Configure Database Connection:**
-
-   Open the `application.properties` file located in `src/main/resources` and add the following configuration:
-
-   ```properties
-   spring.datasource.url=jdbc:mysql://localhost:3306/crud
-   spring.datasource.username=root
-   spring.datasource.password=password
-   ```
-
-   Modify the `url`, `username`, and `password` properties according to your MySQL database configuration.
 
 3. **Database Connection Class:**
 
