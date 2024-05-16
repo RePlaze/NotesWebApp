@@ -1,8 +1,11 @@
 package Spring.WebApp.login;
 
+import Spring.WebApp.Transfer.TransferService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.sql.SQLException;
 
 @Controller
 public class RegistrationController {
@@ -22,7 +25,7 @@ public class RegistrationController {
     public String handleRegistration(@RequestParam String username,
                                      @RequestParam String password,
                                      @RequestParam String repeatPassword,
-                                     ModelMap model) {
+                                     ModelMap model) throws SQLException {
         String error = validateRegistration(username, password, repeatPassword);
         if (error != null) {
             model.addAttribute("error", error);
@@ -30,6 +33,7 @@ public class RegistrationController {
         }
 
         boolean registrationResult = authenticationService.registerUser(username, password);
+        authenticationService.addProfileId(username);
         if (registrationResult) {
             return "redirect:/login";
         } else {

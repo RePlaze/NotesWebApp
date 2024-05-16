@@ -8,12 +8,14 @@ import org.springframework.stereotype.Service;
 
 import java.sql.*;
 
+import static Spring.WebApp.Transfer.TransferService.getUserId;
+
 @Service
 public class AuthenticationService {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
-    public boolean authenticate(String username, String password) {
+    public boolean authenticate(String username, String password) throws SQLException {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(SQLQueries.SELECT_USER)) {
             preparedStatement.setString(1, username);
@@ -21,42 +23,47 @@ public class AuthenticationService {
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next();
             }
-        } catch (SQLException e) {
-            logger.error("Error occurred while authenticating user", e);
-            return false;
         }
     }
 
-    public boolean registerUser(String username, String password) {
+    public boolean registerUser(String username, String password) throws SQLException {
         if (isEmpty(username) || isEmpty(password) || usernameExists(username)) {
             return false;
         }
+
         try (Connection connection = DBConnection.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SQLQueries.INSERT_USER)) {
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password);
-            preparedStatement.setString(3, "1000");
-            return preparedStatement.executeUpdate() > 0;
-        } catch (SQLException e) {
-            logger.error("Error occurred while registering user", e);
-            return false;
+             PreparedStatement userStatement = connection.prepareStatement(SQLQueries.INSERT_USER);
+             ) {
+
+            // Insert new user into users table
+            userStatement.setString(1, username);
+            userStatement.setString(2, password);
+            userStatement.setFloat(3, 1000);
+            int userInserted = userStatement.executeUpdate();
+            return true;
         }
     }
 
-    private boolean usernameExists(String username) {
+
+    public void addProfileId(String username) throws SQLException {
+        try (Connection connection = DBConnection.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SQLQueries.INSERT_PROFILE)) {
+            preparedStatement.setInt(1, getUserId(username));
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    private boolean usernameExists(String username) throws SQLException {
         return executeExistsQuery(SQLQueries.SELECT_USERNAME, username);
     }
 
-    private boolean executeExistsQuery(String sql, String parameter) {
+    private boolean executeExistsQuery(String sql, String parameter) throws SQLException {
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, parameter);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 return resultSet.next();
             }
-        } catch (SQLException e) {
-            logger.error("Error occurred while executing query", e);
-            return false;
         }
     }
 

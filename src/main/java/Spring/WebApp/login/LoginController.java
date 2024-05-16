@@ -4,6 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+
 @Controller
 @SessionAttributes("username")
 public class LoginController {
@@ -25,7 +27,7 @@ public class LoginController {
     @PostMapping("/login")
     public String handleLogin(@RequestParam String username,
                               @RequestParam String password,
-                              ModelMap model) {
+                              ModelMap model) throws SQLException {
         if (authenticationService.authenticate(username, password)) {
             model.addAttribute("username", username);
             return "redirect:/list-Transfers";

@@ -120,6 +120,25 @@
     label {
     color: #ffffff ;
     }
+.transfer-card {
+    background-color: #333; /* Dark Gray Background */
+    border-radius: 15px; /* Rounded Corners */
+    padding: 20px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 1); /* Outer Shadow */
+    margin-bottom: 20px;
+}
+    .sender {
+        font-size: 18px;
+        font-weight: bold;
+        color: #fff; /* White Text */
+        margin-bottom: 5px;
+    }
+
+.amount, .date {
+    font-size: 18px;
+    color: #ff0000; /* Red Text */
+    margin-bottom: 10px;
+}
 </style>
 </head>
 <body>
@@ -133,14 +152,14 @@
     <div id="TransferCreationCard" class="transfer-creation-card">
         <form id="addTransferForm" method="post" action="/add-Transfer">
             <div class="form-group mb-3">
-                <label for="description">Amount</label>
-                    <input type="text" id="amount" name="amount" required="required" class="form-control" placeholder="150,5 P" pattern="\d+\,\d{0,2}(?!\d)" />
+                <label for="amount">Amount</label>
+                <input type="text" id="amount" name="amount" autocomplete="off" required="required" class="form-control" placeholder="150,5 P" pattern="\d+\,\d{0,2}(?!\d)" />
             </div>
             <div class="form-group mb-3">
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required="required" class="form-control" placeholder="Enter phone number" maxlength="11"/>
+                <input type="tel" id="phone" name="phone" autocomplete="off" required="required" class="form-control" placeholder="Enter phone number" maxlength="11"/>
                 <div id="phoneError" class="error-message" style="display: none;">Please enter a valid phone number</div>
-            <div id="userNotFoundError" class="error-message" style="display: none;">User not found</div>
+                <div id="userNotFoundError" class="error-message" style="display: none;">User not found</div>
             </div>
             <input type="hidden" id="id" name="id" required="required"/>
             <input type="hidden" id="done" name="done" required="required"/>
@@ -148,47 +167,43 @@
             <button id="cancelAddTransfer" type="button" style="color: #535c66;" class="btn btn-cancel btn-block">Cancel</button>
         </form>
     </div>
-<c:forEach items="${transfers}" var="transfer">
-    <div class="transfer-card">
-        <h2>Sender: ${transfer.senderUsername}</h2>
-        <p>Amount: ${transfer.amount}</p>
-        <p>Date: ${transfer.date}</p>
-    </div>
-</c:forEach>
+    <c:forEach items="${transfers}" var="transfer">
+        <div class="transfer-card">
+            <h3 class="sender">Send to: ${transfer.senderUsername}</h3>
+            <a style="color: #fff;">Amount:</a><p class="amount">${transfer.amount}</p>
+            <a style="color: #fff;">Date:</a><p class="date">${transfer.date}</p>
+        </div>
+    </c:forEach>
 </div>
 <script src="webjars/jquery/3.6.4/jquery.min.js"></script>
 <script src="webjars/bootstrap/5.2.3/js/bootstrap.min.js"></script>
 <script src="webjars/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 <script src="webjars/bootstrap-datepicker/1.9.0/locales/bootstrap-datepicker.en-GB.min.js"></script>
 <script>
-// Clear error message when the page is loaded or refreshed
-document.addEventListener("DOMContentLoaded", function() {
-    $('.error').text(""); // Clear error message
-});
-
 $(document).ready(function () {
- // Allow only digits and one comma to be typed in the amount input field
-        $('#amount').on('input', function () {
-            var amount = $(this).val();
-            // Remove non-digit and non-comma characters
-            amount = amount.replace(/[^\d,]/g, '');
-            // Remove leading zeroes
-            amount = amount.replace(/^0+/, '');
-            // Remove extra commas
-            amount = amount.replace(/(,)\1+/g, '$1');
-            // Limit to one comma
-            var parts = amount.split(',');
-            if (parts.length > 2) {
-                parts = [parts[0], parts.slice(1).join('')];
-            }
-            // Limit digits after comma to two
-            if (parts.length === 2 && parts[1].length > 2) {
-                parts[1] = parts[1].substring(0, 2);
-            }
-            amount = parts.join(',');
-            // Update the value in the input field
-            $(this).val(amount);
-        });
+    // Allow only digits and one comma to be typed in the amount input field
+    $('#amount').on('input', function () {
+        var amount = $(this).val();
+        // Remove non-digit and non-comma characters
+        amount = amount.replace(/[^\d,]/g, '');
+        // Remove leading zeroes
+        amount = amount.replace(/^0+/, '');
+        // Remove extra commas
+        amount = amount.replace(/(,)\1+/g, '$1');
+        // Limit to one comma
+        var parts = amount.split(',');
+        if (parts.length > 2) {
+            parts = [parts[0], parts.slice(1).join('')];
+        }
+        // Limit digits after comma to two
+        if (parts.length === 2 && parts[1].length > 2) {
+            parts[1] = parts[1].substring(0, 2);
+        }
+        amount = parts.join(',');
+        // Update the value in the input field
+        $(this).val(amount);
+    });
+
     // Function to validate phone number input
     $('#phone').on('input', function () {
         // Remove non-digits characters
@@ -207,19 +222,6 @@ $(document).ready(function () {
         }
     });
 
-    // Allow only digits and one comma to be typed in the amount input field
-    $('#amount').on('input', function () {
-        var amount = $(this).val();
-        // Remove non-digit and non-comma characters
-        amount = amount.replace(/[^\d,]/g, '');
-        // Remove leading zeroes
-        amount = amount.replace(/^0+/, '');
-        // Remove extra commas
-        amount = amount.replace(/(,)\1+/g, '$1');
-        // Update the value in the input field
-        $(this).val(amount);
-    });
-
     // Toggle the Transfer creation card
     $('#addTransferButton').click(function () {
         $('#TransferCreationCard').toggleClass('active');
@@ -228,53 +230,48 @@ $(document).ready(function () {
         $('#addTransferButton').toggleClass('fade-in fade-out');
     });
 
-// Handle "Done" button click
-$('#submitTransfer').click(function (event) {
-    event.preventDefault(); // Prevent default form submission
+    // Handle "Done" button click
+    $('#submitTransfer').click(function (event) {
+        event.preventDefault(); // Prevent default form submission
 
-    // Check if form is valid
-    if ($('#addTransferForm')[0].checkValidity()) {
-        // Extract form data
-        var formData = $('#addTransferForm').serialize();
-        var phone = $('#phone').val();
+        // Check if form is valid
+        if ($('#addTransferForm')[0].checkValidity()) {
+            // Extract form data
+            var formData = $('#addTransferForm').serialize();
+            var phone = $('#phone').val();
 
-        // Replace commas with dots in the amount field
-        var amount = $('#amount').val().replace(/,/g, '.');
+            // Replace commas with dots in the amount field
+            var amount = $('#amount').val().replace(/,/g, '.');
 
-        // Convert the amount to a float
-        amount = parseFloat(amount);
+            // Convert the amount to a float
+            amount = parseFloat(amount);
 
-        // Call withdrawAmount function
-        $.post('/withdrawAmount', { phone: phone, amount: amount }, function (withdrawResponse) {
-            console.log(withdrawResponse); // Log response
-            if (withdrawResponse.success) {
-                console.log("Amount withdrawn successfully");
-                // Call addTransfer function
-                $.post('/addTransfer', formData, function (transferResponse) {
-                    console.log(transferResponse); // Log response
-                    if (transferResponse.success) {
-                        console.log("Transfer added successfully");
-                        // Reset form fields and hide Transfer creation card
-                        $('#addTransferForm')[0].reset();
-                        $('#TransferCreationCard').removeClass('active');
-                        $('#addTransferButton').removeClass('btn-cancel');
-                        $('#addTransferButton').removeClass('fade-out').addClass('fade-in');
-                        $('#addTransferButton').removeClass('disabled');
-                        // You can add further logic here if needed
-                    } else {
-                        console.error("Failed to add transfer");
-                        // Display error message
-                        $('.error').text("Failed to add transfer").show(); // Show error message
-                    }
-                });
-            }
-        }).fail(function() {
-            console.error("Error occurred during AJAX request");
-            // Display generic error message
-            $('.error').text("Failed to withdraw amount").show(); // Show error message
-        });
-    }
-});
+            // Call withdrawAmount function
+            $.post('/withdrawAmount', { phone: phone, amount: amount }, function (withdrawResponse) {
+                console.log(withdrawResponse); // Log response
+                if (withdrawResponse.success) {
+                    console.log("Amount withdrawn successfully");
+                    // Call addTransfer function
+                    $.post('/addTransfer', formData, function (transferResponse) {
+                        console.log(transferResponse); // Log response
+                        if (transferResponse.success) {
+                            console.log("Transfer added successfully");
+                            // Reload the page after a successful transfer
+                            location.reload(true);
+                        } else {
+                            console.error("Failed to add transfer");
+                            // Display error message
+                            $('.error').text("Failed to add transfer").show(); // Show error message
+                        }
+                    });
+                }
+            }).fail(function() {
+                console.error("Error occurred during AJAX request");
+                // Display generic error message
+                $('.error').text("Failed to withdraw amount").show(); // Show error message
+            });
+        }
+    });
 
     // Cancel Transfer creation
     $('#cancelAddTransfer').click(function () {
