@@ -13,6 +13,5 @@ public class SQLQueries {
     public static final String SELECT_TRANSFERS_FOR_USER = "SELECT t.phone, t.amount, t.transfer_date FROM transfers t JOIN users u ON t.user_id = u.id WHERE u.username = ?";
     public static final String SELECT_PROFILE = "SELECT FullName, Email, Gender, DateOfBirth FROM profile WHERE ID = ?";
     public static final String UPDATE_USER_PROFILE = "UPDATE profile SET FullName = ?, Email = ?, Gender = ?, DateOfBirth = ? WHERE ID = ?";
-    public static final String SELECT_FULLNAME_BY_USERNAME = "SELECT p.FullName FROM profile p JOIN users u ON p.FullName = u.username WHERE u.username = ?";
 }
 
