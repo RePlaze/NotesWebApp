@@ -5,8 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.*;
-import java.time.LocalDate;
+import java.sql.SQLException;
 
 @Controller
 @SessionAttributes("username")
@@ -20,7 +19,7 @@ public class TransferController {
     }
 
     @GetMapping("list-Transfers")
-    public String listAllTransfers(ModelMap model) {
+    public String listAllTransfers(ModelMap model) throws SQLException {
         String username = (String) model.get("username");
         double balance = transferService.getBalance(username);
         model.addAttribute("username", username);
@@ -29,10 +28,18 @@ public class TransferController {
     }
 
     @PostMapping("withdrawAmount")
-    public String withdrawAmount(@RequestParam("phone") String phone, @RequestParam("amount") double amount, ModelMap model) {
+    public String withdrawAmount(@RequestParam("phone") String phone, @RequestParam("amount") double amount, ModelMap model) throws SQLException {
         String username = (String) model.get("username");
-        transferService.withdrawAmount(username, amount, phone);
-        model.addAttribute("balance", transferService.updateLocalBalance(username, amount));
-        return "redirect:/list-Transfers";
+        double newBalance = transferService.updateLocalBalance(username, amount);
+
+        // Check if the balance is sufficient for the transfer
+        if (newBalance >= 0 && transferService.foundPhoneToTransfer(phone) && !transferService.isSameUser(username,phone)) {
+            transferService.withdrawAmount(username, amount, phone);
+            model.addAttribute("balance", newBalance);
+            return "redirect:/list-Transfers";
+        } else {
+            model.addAttribute("error", "Insufficient balance to make this transfer");
+            return "errorPage";
+        }
     }
 }

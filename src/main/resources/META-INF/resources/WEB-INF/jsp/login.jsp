@@ -37,13 +37,6 @@
         color: #333;
     }
 
-    .container h5 {
-        font-size: 14px;
-        color: #8e8e93;
-        margin-bottom: 30px;
-    }
-
-
     input[type="text"],
     input[type="password"] {
         display: block;
